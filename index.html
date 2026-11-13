@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apostrophe converter - Intopia</title>
+<link rel="shortcut icon" href="https://intopia.digital/wp-content/uploads/2017/06/cropped-Intopia_FINAL_icon-32x32.png" sizes="32x32">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --ink: #16233d;
+  --ink-soft: #4a5875;
+  --paper: #efefef;
+  --panel: #ffffff;
+  --line: #d9d2be;
+  --border-strong: #dddddd;
+  --red: #a5322a;
+  --red-bg: #fbeae7;
+  --green: #29614a;
+  --green-bg: #e9f2ec;
+  --amber: #93641a;
+  --amber-bg: #faf1dc;
+  --neutral: #5b6472;
+  --neutral-bg: #f4f3ef;
+  --info: #29506b;
+  --info-bg: #e6eef3;
+  --focus: #1b4fbf;
+  --brand: #c03c0c;
+  --font-brand: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, Frutiger, 'Frutiger Linotype', Univers, Calibri, 'Gill Sans', 'Gill Sans MT', 'Myriad Pro', Myriad, 'DejaVu Sans Condensed', 'Liberation Sans', 'Nimbus Sans L', Tahoma, Geneva, sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --radius: 4px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 32px 20px 64px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.wrap { max-width: 900px; margin: 0 auto; }
+
+.brand { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.intopia-logo { width: 180px; height: auto; }
+
+.brand-text h1 {
+  font-family: var(--font-brand);
+  color: var(--brand);
+  font-size: 2.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.intro {
+  margin: 12px 0 0;
+  color: var(--ink-soft);
+  max-width: 62ch;
+}
+
+.privacy {
+  margin: 12px 0 32px;
+  color: var(--ink-soft);
+  max-width: 62ch;
+}
+
+h2 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 2px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.field { margin-bottom: 24px; }
+.field:last-child { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.hint {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  margin: 0 0 8px;
+}
+
+textarea {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--panel);
+  border: 2px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 12px;
+  resize: vertical;
+}
+
+input[type="file"] {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 8px;
+  background: var(--panel);
+  border: 2px solid var(--border-strong);
+  border-radius: var(--radius);
+  max-width: 100%;
+}
+
+button {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-radius: var(--radius);
+  padding: 12px 22px;
+}
+
+.btn-primary {
+  background: var(--brand);
+  color: #ffffff;
+  border: 2px solid var(--brand);
+}
+
+.btn-primary:hover { background: #a63409; border-color: #a63409; }
+
+:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+.error {
+  background: var(--red-bg);
+  border: 2px solid var(--red);
+  border-radius: var(--radius);
+  color: var(--red);
+  font-weight: 600;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+}
+
+.file-name {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  margin: 8px 0 0;
+}
+
+#output { min-height: 320px; }
+
+.copy-row { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 12px; }
+
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="brand">
+    <img src="https://intopia.digital/wp-content/themes/intopia-refresh/assets/images/intopia.png" alt="Intopia logo" class="intopia-logo">
+    <div class="brand-text">
+      <h1>Apostrophe converter</h1>
+    </div>
+  </header>
+
+  <p class="intro">Finds the apostrophes in contractions and possessives, and replaces each one with <code>&amp;#8217;</code>, the numeric entity for a curly apostrophe. It works in HTML and in plain XML, including RSS, SVG and XHTML without a DTD.</p>
+
+  <p class="privacy">Nothing you paste or upload here is sent anywhere. This tool runs entirely in your browser.</p>
+
+  <div class="error" id="error" tabindex="-1" hidden></div>
+
+  <div class="panel">
+    <div class="field">
+      <label for="source">Option 1: Paste your text</label>
+      <textarea id="source" rows="14" spellcheck="false"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="file">Option 2: Upload a file</label>
+      <p class="hint" id="file-hint">Accepts .md, .markdown, .txt, .html, .htm and .xml files. The contents will be added to the text box above.</p>
+      <input type="file" id="file" accept=".md,.markdown,.txt,.html,.htm,.xml" aria-describedby="file-hint">
+      <p class="file-name" id="file-name" hidden></p>
+    </div>
+
+    <button type="button" class="btn-primary" id="convert">Convert apostrophes</button>
+  </div>
+
+  <div class="panel" id="output-panel" hidden>
+    <h2 id="output-heading" tabindex="-1">Result</h2>
+    <textarea id="output" rows="20" readonly spellcheck="false" aria-labelledby="output-heading"></textarea>
+    <div class="copy-row">
+      <button type="button" class="btn-primary" id="copy">Copy to clipboard</button>
+      <button type="button" class="btn-primary" id="reset">Start again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // The one form that works everywhere: HTML, and plain XML with no DTD.
+  var ENTITY = '&#8217;';
+
+  /* ---------------------------------------------------------------
+     What gets left alone
+     --------------------------------------------------------------- */
+
+  // Regions passed through exactly as they are: fenced and inline code in
+  // markdown, the contents of script, style, code and pre, HTML comments,
+  // and the inside of any tag, so quotes around attribute values are never
+  // touched. Order matters, fences have to be matched before single
+  // backticks.
+  var SKIP = new RegExp([
+    '```[\\s\\S]*?```',
+    '~~~[\\s\\S]*?~~~',
+    '`[^`\\n]*`',
+    '<!--[\\s\\S]*?-->',
+    '<(script|style|code|pre)\\b[^>]*>[\\s\\S]*?<\\/\\1\\s*>',
+    '<[^>]*>'
+  ].join('|'), 'gi');
+
+  /* ---------------------------------------------------------------
+     What counts as an apostrophe
+     --------------------------------------------------------------- */
+
+  // Already the right character, just spelled a different way. These are
+  // normalised wherever they appear, because the job is one spelling
+  // across the whole file.
+  var CURLY = /’|&rsquo;|&#x0*2019;|&#0*8217;/gi;
+
+  // A straight apostrophe, in any of its forms. Converted only where it is
+  // doing an apostrophe's job rather than acting as a quotation mark.
+  var STRAIGHT = /'|&apos;|&#0*39;|&#x0*27;/gi;
+
+  // Accented letters included, so Hallowe'en and O'Néill both work.
+  var LETTER = /[A-Za-zÀ-ɏ]/;
+
+  // Words that normally start with a dropped letter. A known list, because
+  // a leading apostrophe is otherwise impossible to tell apart from an
+  // opening single quote.
+  var ELISION = /^(?:til|till|tis|twas|twere|em|cause|bout|round|neath|gainst)(?![A-Za-z])/i;
+
+  // Decades written short, such as '90s and '20s.
+  var DECADE = /^\d{2}s(?![A-Za-z0-9])/;
+
+  /* ---------------------------------------------------------------
+     The replacement itself
+     --------------------------------------------------------------- */
+
+  function fixText(text, counter) {
+    // Every other way of writing the curly apostrophe, so the file ends up
+    // using the one portable form throughout.
+    text = text.replace(CURLY, function (match) {
+      if (match !== ENTITY) { counter.n += 1; }
+      return ENTITY;
+    });
+
+    // rock 'n' roll, where both apostrophes stand for dropped letters.
+    text = text.replace(/(^|\s)'n'(?=\s)/g, function (m, lead) {
+      counter.n += 2;
+      return lead + ENTITY + 'n' + ENTITY;
+    });
+
+    return text.replace(STRAIGHT, function (match, offset, whole) {
+      var before = whole.charAt(offset - 1);
+      var after = whole.slice(offset + match.length);
+
+      // The ordinary case, an apostrophe sitting between two letters:
+      // don't, it's, Russ's, o'clock, ne'er.
+      if (LETTER.test(before) && LETTER.test(after.charAt(0))) {
+        counter.n += 1;
+        return ENTITY;
+      }
+
+      // A word with its opening letters dropped.
+      if (!LETTER.test(before) && (ELISION.test(after) || DECADE.test(after))) {
+        counter.n += 1;
+        return ENTITY;
+      }
+
+      return match;
+    });
+  }
+
+  function convert(text) {
+    var counter = { n: 0 };
+    var out = '';
+    var last = 0;
+    var match;
+
+    SKIP.lastIndex = 0;
+
+    while ((match = SKIP.exec(text)) !== null) {
+      out += fixText(text.slice(last, match.index), counter);
+      out += match[0];
+      last = match.index + match[0].length;
+      if (match[0].length === 0) { SKIP.lastIndex += 1; }
+    }
+
+    out += fixText(text.slice(last), counter);
+
+    return { text: out, count: counter.n };
+  }
+
+  /* ---------------------------------------------------------------
+     Page wiring
+     --------------------------------------------------------------- */
+
+  var source = document.getElementById('source');
+  var fileInput = document.getElementById('file');
+  var fileName = document.getElementById('file-name');
+  var convertBtn = document.getElementById('convert');
+  var copyBtn = document.getElementById('copy');
+  var resetBtn = document.getElementById('reset');
+  var outputPanel = document.getElementById('output-panel');
+  var outputHeading = document.getElementById('output-heading');
+  var output = document.getElementById('output');
+  var error = document.getElementById('error');
+
+  function showError(message) {
+    error.textContent = message;
+    error.hidden = false;
+    error.focus();
+  }
+
+  function clearError() {
+    error.hidden = true;
+    error.textContent = '';
+  }
+
+  fileInput.addEventListener('change', function () {
+    clearError();
+    var file = fileInput.files && fileInput.files[0];
+    if (!file) { return; }
+
+    if (!/\.(md|markdown|txt|html|htm|xml)$/i.test(file.name)) {
+      fileInput.value = '';
+      fileName.hidden = true;
+      showError('That file type is not accepted. Choose a .md, .markdown, .txt, .html, .htm or .xml file.');
+      return;
+    }
+
+    var reader = new FileReader();
+
+    reader.onload = function () {
+      var text = String(reader.result || '');
+      if (!text.trim()) {
+        fileInput.value = '';
+        fileName.hidden = true;
+        showError('That file is empty. Choose a file with text in it, or paste your text instead.');
+        return;
+      }
+      source.value = text;
+      fileName.textContent = 'Loaded: ' + file.name;
+      fileName.hidden = false;
+    };
+
+    reader.onerror = function () {
+      showError('That file could not be read. Try again, or paste your text instead.');
+    };
+
+    reader.readAsText(file);
+  });
+
+  convertBtn.addEventListener('click', function () {
+    clearError();
+
+    if (!source.value.trim()) {
+      showError('There is no text to convert. Paste some text or upload a file first.');
+      return;
+    }
+
+    var result = convert(source.value);
+
+    output.value = result.text;
+    outputHeading.textContent = result.count === 0
+      ? 'Result: nothing needed changing'
+      : 'Result: ' + result.count + (result.count === 1 ? ' apostrophe' : ' apostrophes') + ' converted';
+
+    outputPanel.hidden = false;
+    copyBtn.textContent = 'Copy to clipboard';
+    outputHeading.focus();
+  });
+
+  resetBtn.addEventListener('click', function () {
+    clearError();
+    source.value = '';
+    fileInput.value = '';
+    fileName.textContent = '';
+    fileName.hidden = true;
+    output.value = '';
+    outputHeading.textContent = 'Result';
+    outputPanel.hidden = true;
+    copyBtn.textContent = 'Copy to clipboard';
+    window.scrollTo(0, 0);
+    source.focus();
+  });
+
+  copyBtn.addEventListener('click', function () {
+    var done = function () {
+      copyBtn.textContent = 'Copied to clipboard';
+      window.setTimeout(function () {
+        copyBtn.textContent = 'Copy to clipboard';
+      }, 2500);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(output.value).then(done, function () {
+        output.select();
+        document.execCommand('copy');
+        done();
+      });
+    } else {
+      output.select();
+      document.execCommand('copy');
+      done();
+    }
+  });
+})();
+</script>
+</body>
+</html>
